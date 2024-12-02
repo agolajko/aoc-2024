@@ -7,7 +7,7 @@ from collections import Counter
 row1 = []
 row2 = []
 
-with open("../data/input.txt", "r") as f:
+with open("../data/day1.txt", "r") as f:
     for line in f:
         fields = line.split('   ')  # Split on three spaces
         row1.append(int(fields[0]))

@@ -17,7 +17,7 @@ int compare_ints(const void *a, const void *b)
 
 int main()
 {
-    FILE *inputFile = fopen("../data/input.txt", "r");
+    FILE *inputFile = fopen("../data/day1.txt", "r");
 
     if (inputFile == NULL)
     {

@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::ifstream inputFile("../data/input.txt");
+    std::ifstream inputFile("../data/day1.txt");
 
     if (!inputFile.is_open())
     {

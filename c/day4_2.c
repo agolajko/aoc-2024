@@ -69,9 +69,38 @@ bool find_mas_north_east(int row, int col, char characters[MAX_LINES][MAX_CHARAC
     return false;
 }
 
+bool find_mas_north_west(int row, int col, char characters[MAX_LINES][MAX_CHARACTERS_PER_LINE], int line_sizes[MAX_LINES], int line_count)
+{
+    if (row > 0 && row < line_count - 1 && col > 0 && col < line_sizes[row] - 1)
+    {
+        char mas[3] = {characters[row - 1][col - 1], characters[row][col], characters[row + 1][col + 1]};
+        return is_mas(mas);
+    }
+    return false;
+}
+
+bool find_mas_south_east(int row, int col, char characters[MAX_LINES][MAX_CHARACTERS_PER_LINE], int line_sizes[MAX_LINES], int line_count)
+{
+    if (row > 0 && row < line_count - 1 && col > 0 && col < line_sizes[row] - 1)
+    {
+        char mas[3] = {characters[row + 1][col + 1], characters[row][col], characters[row - 1][col - 1]};
+        return is_mas(mas);
+    }
+    return false;
+}
+bool find_mas_south_west(int row, int col, char characters[MAX_LINES][MAX_CHARACTERS_PER_LINE], int line_sizes[MAX_LINES], int line_count)
+{
+    if (row > 0 && row < line_count - 1 && col > 0 && col < line_sizes[row] - 1)
+    {
+        char mas[3] = {characters[row + 1][col - 1], characters[row][col], characters[row - 1][col + 1]};
+        return is_mas(mas);
+    }
+    return false;
+}
+
 int main()
 {
-    const char *filename = "../data/day4_small.txt";
+    const char *filename = "../data/day4.txt";
     char characters[MAX_LINES][MAX_CHARACTERS_PER_LINE];
     int line_sizes[MAX_LINES]; // To store the number of elements in each line
 
@@ -81,7 +110,7 @@ int main()
         return 1; // Exit if there was an error reading the file
     }
 
-    int mon_counter = 0;
+    int xmas_num = 0;
     printf("Read %d lines from the file.\n", line_count);
     // print_chars(characters, line_sizes, line_count);
 
@@ -91,13 +120,34 @@ int main()
         {
             if (characters[i][j] == 'A')
             {
+                int x_found = 0;
+
                 // printf("Found A at %d, %d\n", i, j);
                 if (find_mas_north_east(i, j, characters, line_sizes, line_count))
                 {
-                    printf("Found MAS at %d, %d\n", i, j);
+                    x_found++;
+                    // printf("Found MAS at %d, %d\n", i, j);
+                }
+                if (find_mas_north_west(i, j, characters, line_sizes, line_count))
+                {
+                    x_found++;
+                }
+                if (find_mas_south_east(i, j, characters, line_sizes, line_count))
+                {
+                    x_found++;
+                }
+                if (find_mas_south_west(i, j, characters, line_sizes, line_count))
+                {
+                    x_found++;
+                }
+
+                if (x_found == 2)
+                {
+                    xmas_num += 1;
                 }
             }
         }
         // printf("\n");
     }
+    printf("X-MAS found %d times\n", xmas_num);
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct
 {
@@ -97,6 +98,89 @@ int read_numbers_from_file(const char *filename, Database *db)
     return line_count; // Return the number of lines read
 }
 
+int *generate_combinations(int num_digits, int base, int *total_combinations)
+{
+    *total_combinations = pow(base, num_digits);
+    int *combinations = (int *)malloc((*total_combinations) * num_digits * sizeof(int));
+
+    for (int i = 0; i < *total_combinations; i++)
+    {
+        int num = i;
+        for (int j = num_digits - 1; j >= 0; j--)
+        {
+            combinations[i * num_digits + j] = num % base; // Store digit
+            num /= base;                                   // Move to next digit
+        }
+    }
+
+    return combinations;
+}
+
+void print_combinations(int *combinations, int num_digits, int total_combinations)
+{
+    for (int i = 0; i < total_combinations; i++)
+    {
+        for (int j = 0; j < num_digits; j++)
+        {
+            printf("%d", combinations[i * num_digits + j]);
+        }
+        printf("\n");
+    }
+}
+
+long long int concatenate_numbers(long long int num1, long long int num2)
+{
+    // Convert numbers to strings
+    char str1[20], str2[20];
+    sprintf(str1, "%lld", num1);
+    sprintf(str2, "%lld", num2);
+
+    // Concatenate strings
+    char result_str[40];
+    strcpy(result_str, str1);
+    strcat(result_str, str2);
+
+    // Convert the result back to an integer
+    return atoll(result_str);
+}
+
+int try_all_combinations(int *combinations, int comb_len, int *numbers, int total_combinations, long long int result)
+{
+    for (int i = 0; i < total_combinations; i++)
+    {
+        long long int current_result = numbers[0];
+        for (int j = 0; j < comb_len; j++)
+        {
+            int current_number = numbers[j + 1];
+            int current_operator = combinations[i * comb_len + j];
+
+            if (current_operator == 0)
+            {
+                current_result += current_number;
+            }
+            else if (current_operator == 1)
+            {
+                current_result *= current_number;
+            }
+            else if (current_operator == 2)
+            {
+                current_result = concatenate_numbers(current_result, current_number);
+            }
+            else
+            {
+                printf("Invalid operator: %d\n", current_operator);
+            }
+        }
+        if (current_result == result)
+        {
+            // printf("Found a match: %lld\n", current_result);
+
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int main()
 {
 
@@ -112,15 +196,35 @@ int main()
     printf("Read %d entries from the file.\n", db.size);
     printf("DB capacity is %ld.\n", db.capacity);
 
-    // for (int i = 0; i < 9; i++)
-    // {
-    //     printf("Entry %d: %d\n", i, db.entries[i].result);
-    //     for (int j = 0; j < db.entries[i].count; j++)
-    //     {
-    //         printf("%d \n", db.entries[i].numbers[j]);
-    //     }
-    //     printf("\n");
-    // }
+    int found_matches = 0;
+
+    long long int sum_res = 0;
+
+    for (int i = 0; i < db.size; i++)
+    {
+
+        int num_digits = db.entries[i].count - 1; // Length of combinations
+        int base = 3;                             // Number of distinct values (0, 1, 2)
+        int total_combinations;
+
+        // Generate combinations
+        int *combinations = generate_combinations(num_digits, base, &total_combinations);
+
+        int found_comb;
+
+        found_comb = try_all_combinations(combinations, num_digits, db.entries[i].numbers, total_combinations, db.entries[i].result);
+
+        if (found_comb)
+        {
+            found_matches++;
+            sum_res += db.entries[i].result;
+        }
+
+        free(combinations);
+    }
+
+    printf("Found %d matches.\n", found_matches);
+    printf("Sum of results: %lld\n", sum_res);
 
     for (int i = 0; i < db.size; i++)
     {

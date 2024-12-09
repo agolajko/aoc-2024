@@ -11,7 +11,7 @@ with open("../data/day9.txt", newline='\n') as f:
         num_str += line
 
 
-def map_free_space(num_str: str):
+def parse_input(num_str: str):
     free_space = []
     for i in range(len(num_str)):
         if i % 2 == 0:
@@ -74,7 +74,7 @@ def flatten_sum(compacted_space: list):
     return sum
 
 
-mapped_str = map_free_space(num_str)
+mapped_str = parse_input(num_str)
 
 filled_list = fill_free_space(mapped_str)
 

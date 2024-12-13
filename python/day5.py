@@ -38,26 +38,6 @@ def check_sequence_rules(update_inst, rules_list):
     return True
 
 
-def reorder_list(update_inst, rules_list):
-    # print("Before: ", update_inst)
-    # Check each rule
-
-    for i in range(len(update_inst)):
-        for before, after in rules_list:
-            upd_positions = {num: idx for idx, num in enumerate(update_inst)}
-
-            # Check if 'before' appears before 'after'
-            if before in upd_positions and after in upd_positions:
-                if upd_positions[before] > upd_positions[after]:
-                    # Swap the two values
-                    before_idx = upd_positions[before]
-                    after_idx = upd_positions[after]
-
-                    update_inst[before_idx], update_inst[after_idx] = update_inst[after_idx], update_inst[before_idx]
-    # print("After: ", update_inst)
-    return update_inst
-
-
 def reorder_sequence(numbers, rules):
 
     # Build graph and calculate in-degrees
@@ -93,7 +73,7 @@ def reorder_sequence(numbers, rules):
     while queue:
         current = queue.popleft()
         result.append(current)
-
+        # print('Graph current: ', graph[current])
         # Process neighbors
         for neighbor in graph[current]:
             in_degree[neighbor] -= 1

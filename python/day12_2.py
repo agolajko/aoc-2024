@@ -71,25 +71,29 @@ def count_distinct_sides(region: Set[Tuple[int, int]], grid: List[str]) -> int:
             if is_outside(nx, ny) or (nx, ny) not in region:
                 # For horizontal sides (dx == 0)
                 if dx == 0:
-                    # Look up and down to find where this horizontal segment starts/ends
+                    # Look up and down to find where this vertical segment starts/ends
                     up = x
                     while (up-1, y) in region and (up-1, ny) not in region:
                         up -= 1
                     down = x
                     while (down+1, y) in region and (down+1, ny) not in region:
                         down += 1
-                    sides.add(('H', up, down, y, ny))
+                    print(f'Addig side for {x, y}: "V" {up, down, y, ny}')
+                    sides.add(('V', up, down, y, ny))
                 # For vertical sides (dy == 0)
                 else:
-                    # Look left and right to find where this vertical segment starts/ends
+                    # Look left and right to find where this horizontal segment starts/ends
                     left = y
                     while (x, left-1) in region and (nx, left-1) not in region:
                         left -= 1
                     right = y
                     while (x, right+1) in region and (nx, right+1) not in region:
                         right += 1
-                    sides.add(('V', left, right, x, nx))
+                    print(f'Addig side for {x, y}: "H" {left, right, x, nx}')
 
+                    sides.add(('H', left, right, x, nx))
+
+    print(f'Sides {sides}')
     return len(sides)
 
 
@@ -102,6 +106,7 @@ def calculate_total_price(grid: List[str]) -> int:
     for (plant_type, region_num), region in regions.items():
         area = len(region)
         sides = count_distinct_sides(region, grid)
+        print(f'Sides for region {plant_type}{region_num}: {sides}')
         price = area * sides
         total_price += price
         # print(
@@ -110,43 +115,9 @@ def calculate_total_price(grid: List[str]) -> int:
     return total_price
 
 
-# Test cases from the problem
-test_cases = [
-    # Basic example
-    [
-        "AAAA",
-        "BBCD",
-        "BBCC",
-        "EEEC"
-    ],
-    # E-shaped region
-    [
-        "EEEEE",
-        "EXXXX",
-        "EEEEE",
-        "EXXXX",
-        "EEEEE"
-    ],
-    # Example with internal region
-    [
-        "AAAAAA",
-        "AAABBA",
-        "AAABBA",
-        "ABBAAA",
-        "ABBAAA",
-        "AAAAAA"
-    ]
-]
-
-print("Running test cases:")
-for i, test_grid in enumerate(test_cases):
-    print(f"\nTest case {i+1}:")
-    result = calculate_total_price(test_grid)
-    print(f"Total price: {result}")
-
 # Process actual input
 try:
-    with open("../data/day12.txt", 'r') as file:
+    with open("../data/day12_small.txt", 'r') as file:
         grid = [line.strip() for line in file.readlines()]
     print("\nProcessing input file:")
     print(f"Grid dimensions: {len(grid)}x{len(grid[0])}")
